@@ -160,6 +160,8 @@ more useful sorting
 Default location for tasks/agenda stuff
 #+begin_src emacs-lisp
 (setq org-directory "~/Documents/org/tasks/")
+(setq org-agenda-files '("~/Documents/org/tasks"))
+
 #+end_src
 
 *** cute svgs
@@ -255,9 +257,213 @@ Default location for tasks/agenda stuff
 a general overview of current tasks
 main goal is to keep track of general weekly uni stuff while also remaining aware of assignment releases/due dates and important deadlines
 
+#+begin_src emacs-lisp
+(defun my/org-agenda-highlight-todo (x)
+  (let* ((done (string-match-p (regexp-quote ":DONE:") x))
+         (canceled (string-match-p (regexp-quote "~") x))
+         (x (replace-regexp-in-string ":TODO:" "" x))
+         (x (replace-regexp-in-string ":DONE:" "" x))
+         (x (replace-regexp-in-string "~" "" x))
+         (x (if (and (boundp 'org-agenda-dim) org-agenda-dim)
+                (propertize x 'face 'org-done) x))
+         (x (if done (propertize x 'face 'org-done) x))
+         (x (if canceled (propertize x 'face 'org-done) x)))
+    x))
 
+(advice-add 'org-agenda-highlight-todo
+            :filter-return #'my/org-agenda-highlight-todo)
 
+(defun my/svg-tag-timestamp (&rest args)
+  "Create a timestamp SVG tag for the time at point."
 
+  (interactive)
+  (let ((inhibit-read-only t))
+
+    (goto-char (point-min))
+    (while (search-forward-regexp
+            "\\(\([0-9]/[0-9]\):\\)" nil t)
+              (set-text-properties (match-beginning 1) (match-end 1)
+                             `(display ,(svg-tag-make "ANYTIME"
+                                                      :face 'org-meta-line
+                                                      :inverse nil
+                                                      :padding 3 :alignment 0))))
+
+    (goto-char (point-min))
+    (while (search-forward-regexp
+            "\\([0-9]+:[0-9]+\\)\\(\\.+\\)" nil t)
+
+              (set-text-properties (match-beginning 1) (match-end 2)
+                             `(display ,(svg-tag-make (match-string 1)
+                                                       :face 'org-scheduled
+                                                       :margin 4 :alignment 0))))
+
+    (goto-char (point-min))
+    (while (search-forward-regexp
+            "\\([0-9]+:[0-9]+\\)\\(\\.*\\)" nil t)
+
+              (set-text-properties (match-beginning 1) (match-end 2)
+                             `(display ,(svg-tag-make (match-string 1)
+                                                      :face 'org-scheduled
+                                                      :inverse t
+                                                      :margin 4 :alignment 0))))
+    (goto-char (point-min))
+    (while (search-forward-regexp
+            "\\([0-9]+:[0-9]+\\)\\(-[0-9]+:[0-9]+\\)" nil t)
+      (let* ((t1 (parse-time-string (match-string 1)))
+             (t2 (parse-time-string (substring (match-string 2) 1)))
+             (t1 (+ (* (nth 2 t1) 60) (nth 1 t1)))
+             (t2 (+ (* (nth 2 t2) 60) (nth 1 t2)))
+             (d  (- t2 t1)))
+
+        (set-text-properties (match-beginning 1) (match-end 1)
+                                `(display ,(svg-tag-make (match-string 1)
+                                                         :face 'org-roam-dim
+                                                         :crop-right t)))
+        ;; 15m: ¼, 30m:½, 45m:¾
+        (if (< d 60)
+             (set-text-properties (match-beginning 2) (match-end 2)
+                                  `(display ,(svg-tag-make (format "%2dm" d)
+                                                           :face 'org-roam-dim
+                                                           :crop-left t :inverse t)))
+           (set-text-properties (match-beginning 2) (match-end 2)
+                                `(display ,(svg-tag-make (format "%1dH" (/ d 60))
+                                                         :face 'org-roam-dim
+                                                         :crop-left t :inverse t
+                                                         :padding 2 :alignment 0))))))))
+
+(add-hook 'org-agenda-mode-hook #'my/svg-tag-timestamp)
+(advice-add 'org-agenda-redo :after #'my/svg-tag-timestamp)
+
+                (defun my/org-agenda-custom-date ()
+  (interactive)
+  (let* ((timestamp (org-entry-get nil "TIMESTAMP"))
+         (timestamp (or timestamp (org-entry-get nil "DEADLINE"))))
+    (if timestamp
+        (let* ((delta (- (org-time-string-to-absolute (org-read-date nil nil timestamp))
+                         (org-time-string-to-absolute (org-read-date nil nil ""))))
+               (delta (/ (+ 1 delta) 30.0))
+               (face (cond ;; ((< delta 0.25) 'nano-popout)
+                           ;; ((< delta 0.50) 'nano-salient)
+                           ((< delta 1.00) 'org-scheduled)
+                           (t 'org-roam-dim))))
+          (concat
+           (propertize " " 'face nil
+                       'display (svg-lib-progress-pie
+                                 delta nil
+                                 :background (face-background face nil 'default)
+                                 :foreground (face-foreground face)
+                                 :margin 0 :stroke 2 :padding 1))
+           " "
+           (propertize
+            (format-time-string "%d/%m" (org-time-string-to-time timestamp))
+            'face 'org-agenda-current-time)))
+      "     ")))
+
+#+end_src
+
+#+begin_src emacs-lisp
+(setq org-agenda-custom-commands
+      '(("o" "Overview"
+         ((agenda "" ((org-agenda-span 'day)
+                      (org-super-agenda-groups
+                       '((:name "Today"
+                          :time-grid t
+                          :date today
+                          :todo "TODAY"
+                          :scheduled today
+                          :order 1)))))
+          (alltodo "" ((org-agenda-overriding-header "")
+                       (org-super-agenda-groups
+                        '((:name "Next to do"
+                           :todo "NEXT"
+                           :order 1)
+                          (:name "Important"
+                           :tag "Important"
+                           :priority "A"
+                           :order 6)
+                          (:name "Due Today"
+                           :deadline today
+                           :order 2)
+                          (:name "Due Soon"
+                           :deadline future
+                           :order 8)
+                          (:name "Overdue"
+                           :deadline past
+                           :face error
+                           :order 7)
+                          (:name "Assignments"
+                           :tag "Assignment"
+                           :order 10)
+                          (:name "Issues"
+                           :tag "Issue"
+                           :order 12)
+                          (:name "Emacs"
+                           :tag "Emacs"
+                           :order 13)
+                          (:name "Projects"
+                           :tag "Project"
+                           :order 14)
+                          (:name "Research"
+                           :tag "Research"
+                           :order 15)
+                          (:name "To read"
+                           :tag "Read"
+                           :order 30)
+                          (:name "Waiting"
+                           :todo "WAITING"
+                           :order 20)
+                          (:name "University"
+                           :tag "uni"
+                           :order 32)
+                          (:name "Trivial"
+                           :priority<= "E"
+                           :tag ("Trivial" "Unimportant")
+                           :todo ("SOMEDAY" )
+                           :order 90)
+                          (:discard (:tag ("Chore" "Routine" "Daily")))))))))))
+#+end_src
+
+#+begin_src emacs-lisp
+(setq org-agenda-time-grid
+      '((daily today require-timed)
+        ()
+        "......" "----------------"))
+
+(setq org-agenda-current-time-string "   now")
+
+(add-to-list 'org-agenda-custom-commands
+        '("x" "Tasks"
+          ((todo "TODO" ;; "PROJECT"
+                 ( (org-agenda-todo-keyword-format ":%s:")
+                   (org-agenda-prefix-format '((todo   . " ")))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
+                   (org-agenda-overriding-header (propertize " Todo \n" 'face 'bold))))
+
+           (tags "+TALK+TIMESTAMP>=\"<now>\""
+                 ((org-agenda-span 90)
+                  (org-agenda-max-tags 5)
+                  (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) ")))
+                  (org-agenda-overriding-header "\n Upcoming talks\n")))
+
+           (tags "TEACHING+TIMESTAMP>=\"<now>\""
+                 ((org-agenda-span 90)
+                  (org-agenda-max-tags 5)
+                  (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) ")))
+                  (org-agenda-overriding-header "\n Upcoming lessons\n")))
+
+           (tags "TRAVEL+TIMESTAMP>=\"<now>\""
+                 ((org-agenda-span 90)
+                  (org-agenda-max-tags 5)
+                  (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) ")))
+                  (org-agenda-overriding-header "\n Upcoming travels\n")))
+
+           (tags "DEADLINE>=\"<today>\""
+                  ((org-agenda-span 90)
+                   (org-agenda-max-tags 5)
+                   (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) ")))
+                   (org-agenda-overriding-header "\n Upcoming deadlines\n"))))))
+
+#+end_src
 * PDF Enhancements
 Enable midnight mode by default - looks good in light mode too.
 #+begin_src emacs-lisp
