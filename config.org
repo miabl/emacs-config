@@ -1,7 +1,6 @@
 #+title: spaghetti config
 #+subtitle: an unnecessary exercise in procrastination + copy pasting
-#+startup: fold org-latex
-
+#+startup: fold
 
 * General Look & Feel
 
@@ -49,6 +48,12 @@ modeline improvements
 (display-time-mode 1)
 (unless (string-match-p "^Power N/A" (battery))   ; On laptops...
   (display-battery-mode 1))
+#+end_src
+
+cute catppuccin splash screen
+#+begin_src emacs-lisp
+(setq fancy-splash-image "~/.doom.d/images/catppuccin.png")
+
 #+end_src
 
 ** Custom Faces

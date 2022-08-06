@@ -25,6 +25,8 @@
 (unless (string-match-p "^Power N/A" (battery))   ; On laptops...
   (display-battery-mode 1))
 
+(setq fancy-splash-image "~/.doom.d/images/catppuccin.png")
+
 (custom-set-faces!
   '(bold  :weight normal))
 
