@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: latexalgo
+# key: !lalg
+# --
+
+#+LaTeX_HEADER: \usepackage{algpseudocode}
+#+BEGIN_SRC latex :results file raw :exports results :file tmp.png
+\begin{algorithmic}[1]
+$0
+\end{algorithmic}
+#+END_SRC

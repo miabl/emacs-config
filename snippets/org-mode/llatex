@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: llatex
+# uuid:
+# key: !llatex
+# condition: t
+# --
+
+
+#+BEGIN_SRC latex :results file raw :exports results :file tmp.png
+$0
+#+END_SRC
