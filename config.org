@@ -268,6 +268,14 @@ a general overview of current tasks
 main goal is to keep track of general weekly uni stuff while also remaining aware of assignment releases/due dates and important deadlines
 
 **** setup
+don't allow completion until subtasks are completed
+however, don't dim uncompletable tasks
+#+begin_src emacs-lisp
+(setq org-enforce-todo-checkbox-dependencies t)
+(setq org-agenda-dim-blocked-tasks nil)
+#+end_src
+
+setup symbols & svgs for the agenda views
 #+begin_src emacs-lisp
 (defun my/org-agenda-highlight-todo (x)
   (let* ((done (string-match-p (regexp-quote "DONE") x))
@@ -284,8 +292,6 @@ main goal is to keep track of general weekly uni stuff while also remaining awar
 
 (setq org-agenda-hide-tags-regexp
     (regexp-opt '("CITS3001" "CITS1402" "STAT2402" "CITS2211" "coursework")))
-
-(setq org-enforce-todo-checkbox-dependencies t)
 
 (advice-add 'org-agenda-highlight-todo
             :filter-return #'my/org-agenda-highlight-todo)
@@ -419,14 +425,6 @@ main goal is to keep track of general weekly uni stuff while also remaining awar
                    (org-agenda-sorting-strategy '(deadline-up priority-up))
                    (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
                    (org-agenda-overriding-header "\n Upcoming deadlines\n")))
-
-           (tags "SCHEDULED>=\"<today>\"+TODO=\"WAIT\""
-
-                 ((org-agenda-span 90)
-                  (org-agenda-max-tags 5)
-                  (org-agenda-sorting-strategy '(deadline-up priority-down))
-                  (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
-                  (org-agenda-overriding-header "\n Upcoming releases\n")))
                 ))
 
           ("w" "Waiting"
@@ -441,7 +439,6 @@ main goal is to keep track of general weekly uni stuff while also remaining awar
                   (org-agenda-sorting-strategy '(deadline-up priority-up))
                   (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
                   (org-agenda-overriding-header "\n Currently waiting\n")))
-
             (tags "SCHEDULED<=\"<today>\"+TODO=\"WAIT\""
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 10)

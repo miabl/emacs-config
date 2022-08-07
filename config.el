@@ -185,6 +185,9 @@
           ((lambda (tag)
              (svg-tag-make tag :end -1 :inverse t :crop-left t :margin 0 :face 'org-date :font-size 12))))))
 
+(setq org-enforce-todo-checkbox-dependencies t)
+(setq org-agenda-dim-blocked-tasks nil)
+
 (defun my/org-agenda-highlight-todo (x)
   (let* ((done (string-match-p (regexp-quote "DONE") x))
          (canceled (string-match-p (regexp-quote "~") x))
@@ -200,8 +203,6 @@
 
 (setq org-agenda-hide-tags-regexp
     (regexp-opt '("CITS3001" "CITS1402" "STAT2402" "CITS2211" "coursework")))
-
-(setq org-enforce-todo-checkbox-dependencies t)
 
 (advice-add 'org-agenda-highlight-todo
             :filter-return #'my/org-agenda-highlight-todo)
@@ -331,14 +332,6 @@
                    (org-agenda-sorting-strategy '(deadline-up priority-up))
                    (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
                    (org-agenda-overriding-header "\n Upcoming deadlines\n")))
-
-           (tags "SCHEDULED>=\"<today>\"+TODO=\"WAIT\""
-
-                 ((org-agenda-span 90)
-                  (org-agenda-max-tags 5)
-                  (org-agenda-sorting-strategy '(deadline-up priority-down))
-                  (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
-                  (org-agenda-overriding-header "\n Upcoming releases\n")))
                 ))
 
           ("w" "Waiting"
@@ -353,7 +346,6 @@
                   (org-agenda-sorting-strategy '(deadline-up priority-up))
                   (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
                   (org-agenda-overriding-header "\n Currently waiting\n")))
-
             (tags "SCHEDULED<=\"<today>\"+TODO=\"WAIT\""
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 10)
