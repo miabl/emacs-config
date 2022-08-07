@@ -22,9 +22,9 @@ Toggle light/dark mode themes with system appearance
 
 Fonts
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
-      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
-      doom-unicode-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal)
+(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
+      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
+      doom-unicode-font (font-spec :family "RobotoMono Nerd Font Mono" :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 15)
       doom-serif-font (font-spec :family "IBM Plex Mono")
  )
@@ -32,6 +32,7 @@ Fonts
 (custom-set-faces! '(bold :weight normal))
 (setq-default line-spacing 0.25)
 (setq default-text-properties '(line-spacing 0.25 line-height 1.25))
+
 
 #+end_src
 
@@ -45,7 +46,7 @@ nice defaults
 (setq-default fill-column 80                          ; Default line width
               sentence-end-double-space nil           ; Use a single space after dots
               truncate-string-ellipsis "…"            ; Nicer ellipsis
-              large-file-warning-threshold 20000000) ; Nicer ellipsis
+              large-file-warning-threshold 20000000)  ; Nicer ellipsis
 
 #+end_src
 
@@ -83,7 +84,7 @@ Fix weird path exports with Apple silicon
 
 raise undo limit & prevent each step going 10 years back into the past
 #+begin_src emacs-lisp
-(setq undo-limit 10000
+(setq undo-limit 10000000
       evil-want-fine-undo t)
 #+end_src
 
@@ -377,14 +378,22 @@ setup symbols & svgs for the agenda views
                                  :foreground (face-foreground face)
                                  :margin 0 :stroke 2 :padding 1))
            " "
-           (propertize
-            (format-time-string "%d/%m" (org-time-string-to-time timestamp))
+              (propertize
+            (format-time-string "%a %d/%m" (org-time-string-to-time timestamp))
             'face 'org-agenda-current-time)
+              " ("
+                        (number-to-string (org-time-stamp-to-now timestamp))
+                        "d)"
+
 
         ))
+
+
       "     "
+
       ))
                 )
+
 
 #+end_src
 

@@ -8,9 +8,9 @@
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
-(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
-      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
-      doom-unicode-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal)
+(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
+      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
+      doom-unicode-font (font-spec :family "RobotoMono Nerd Font Mono" :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 15)
       doom-serif-font (font-spec :family "IBM Plex Mono")
  )
@@ -24,7 +24,7 @@
 (setq-default fill-column 80                          ; Default line width
               sentence-end-double-space nil           ; Use a single space after dots
               truncate-string-ellipsis "…"            ; Nicer ellipsis
-              large-file-warning-threshold 20000000) ; Nicer ellipsis
+              large-file-warning-threshold 20000000)  ; Nicer ellipsis
 
 (display-time-mode 1)
 (unless (string-match-p "^Power N/A" (battery))   ; On laptops...
@@ -39,7 +39,7 @@
 (add-to-list 'exec-path "/Library/TeX/texbin/")
 (add-to-list 'exec-path "texlive/2022/bin/")
 
-(setq undo-limit 10000
+(setq undo-limit 10000000
       evil-want-fine-undo t)
 
 (setq-default org-ellipsis " …"              ; Nicer ellipsis
@@ -288,12 +288,19 @@
                                  :foreground (face-foreground face)
                                  :margin 0 :stroke 2 :padding 1))
            " "
-           (propertize
-            (format-time-string "%d/%m" (org-time-string-to-time timestamp))
+              (propertize
+            (format-time-string "%a %d/%m" (org-time-string-to-time timestamp))
             'face 'org-agenda-current-time)
+              " ("
+                        (number-to-string (org-time-stamp-to-now timestamp))
+                        "d)"
+
 
         ))
+
+
       "     "
+
       ))
                 )
 
