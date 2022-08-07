@@ -1,4 +1,4 @@
-(setq user-full-name "Mia B")
+(setq user-full-name "Mia")
 
 (defun my/apply-theme (appearance)
   "Load theme, taking current system APPEARANCE into consideration."
@@ -8,18 +8,23 @@
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
-(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
-      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 14)
+(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
+      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
       doom-unicode-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal)
-      doom-variable-pitch-font (font-spec :family "Overpass" :size 16)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 15)
       doom-serif-font (font-spec :family "IBM Plex Mono")
  )
+
+(custom-set-faces! '(bold :weight normal))
+(setq-default line-spacing 0.25)
+(setq default-text-properties '(line-spacing 0.25 line-height 1.25))
 
 (setq display-line-numbers-type 'relative)            ; Relative line numbers
 
 (setq-default fill-column 80                          ; Default line width
               sentence-end-double-space nil           ; Use a single space after dots
-              truncate-string-ellipsis "…")           ; Nicer ellipsis
+              truncate-string-ellipsis "…"            ; Nicer ellipsis
+              large-file-warning-threshold 20000000) ; Nicer ellipsis
 
 (display-time-mode 1)
 (unless (string-match-p "^Power N/A" (battery))   ; On laptops...
@@ -120,8 +125,8 @@
 (setq svg-tag-tags
       `(
         ;; Org tags
-        (":\\([A-Za-z0-9]+\\)" . ((lambda (tag) (svg-tag-make tag :font-size 12))))
-        (":\\([A-Za-z0-9]+[ \-]\\)" . ((lambda (tag) tag :font-size 12)))
+        (":\\([A-Za-z0-9]+\\):" . ((lambda (tag) (svg-tag-make tag :font-size 12))))
+        (":\\([A-Za-z0-9]+[ \-]\\):" . ((lambda (tag) tag :font-size 12)))
 
         ;; Task priority
         ("\\[#[A-Z]\\]" . ( (lambda (tag)
@@ -194,7 +199,7 @@
     x))
 
 (setq org-agenda-hide-tags-regexp
-    (regexp-opt '("CITS3001" "CITS1402" "STAT2402" "CITS2211")))
+    (regexp-opt '("CITS3001" "CITS1402" "STAT2402" "CITS2211" "coursework")))
 
 (setq org-enforce-todo-checkbox-dependencies t)
 
@@ -284,8 +289,11 @@
            " "
            (propertize
             (format-time-string "%d/%m" (org-time-string-to-time timestamp))
-            'face 'org-agenda-current-time)))
-      "     "))
+            'face 'org-agenda-current-time)
+
+        ))
+      "     "
+      ))
                 )
 
 (setq org-agenda-time-grid
@@ -300,32 +308,60 @@
           ((todo "TODO" ;; "PROJECT"
                  ( (org-agenda-todo-keyword-format "%s")
                    (org-agenda-prefix-format '((todo   . " ")))
-                   (org-agenda-sorting-strategy '(priority-up effort-down))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
                    (org-agenda-overriding-header (propertize " Todo \n" 'face 'bold))))
 
            (tags "CITS3001|CITS1402|STAT2402|CITS2211"
                  ((org-agenda-span 90)
-                  (org-agenda-max-tags 5)
-                  (org-agenda-entry-types '(:deadline))
-                  (org-agenda-skip-entry-if 'todo '("DONE" "KILL"))
-                  (org-agenda-sorting-strategy '(priority-up effort-down))
-                  (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
+                  (org-agenda-max-tags 10)
+                  (org-agenda-sorting-strategy '(deadline-up priority-up))
+                  (org-a
+                   genda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
                   (org-agenda-overriding-header "\n Upcoming classwork\n")))
 
-           (tags "assignment"
+           (tags "-TODO=\"WAIT\"+assignment+DEADLINE>=\"<today>\""
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 5)
-                  (org-agenda-sorting-strategy '(priority-up effort-down))
+                  (org-agenda-sorting-strategy '(deadline-up priority-down))
                   (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
                   (org-agenda-overriding-header "\n Upcoming assignments\n")))
 
-           (tags "DEADLINE>=\"<today>\""
+           (tags "DEADLINE>=\"<today>\"-coursework"
                   ((org-agenda-span 90)
                    (org-agenda-max-tags 5)
-                   (org-agenda-sorting-strategy '(priority-up effort-down))
+                   (org-agenda-sorting-strategy '(deadline-up priority-up))
                    (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
-                   (org-agenda-overriding-header "\n Upcoming deadlines\n")))))))
+                   (org-agenda-overriding-header "\n Upcoming deadlines\n")))
+
+           (tags "SCHEDULED>=\"<today>\"+TODO=\"WAIT\""
+
+                 ((org-agenda-span 90)
+                  (org-agenda-max-tags 5)
+                  (org-agenda-sorting-strategy '(deadline-up priority-down))
+                  (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
+                  (org-agenda-overriding-header "\n Upcoming releases\n")))
+                ))
+
+          ("w" "Waiting"
+                     ((todo "TODO" ;; "PROJECT"
+                 ( (org-agenda-todo-keyword-format "%s")
+                   (org-agenda-prefix-format '((todo   . " ")))
+                   (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
+                   (org-agenda-overriding-header (propertize " Todo \n" 'face 'bold))))
+           (tags "SCHEDULED>=\"<today>\""
+                 ((org-agenda-span 90)
+                  (org-agenda-max-tags 10)
+                  (org-agenda-sorting-strategy '(deadline-up priority-up))
+                  (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
+                  (org-agenda-overriding-header "\n Currently waiting\n")))
+
+            (tags "SCHEDULED<=\"<today>\"+TODO=\"WAIT\""
+                 ((org-agenda-span 90)
+                  (org-agenda-max-tags 10)
+                  (org-agenda-sorting-strategy '(deadline-up priority-up))
+                  (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
+                  (org-agenda-overriding-header "\n Update status\n")))
+                ))))
 
 (setq org-capture-templates
        `(("i" "Inbox" entry  (file "inbox.org")
