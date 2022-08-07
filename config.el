@@ -315,8 +315,7 @@
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 10)
                   (org-agenda-sorting-strategy '(deadline-up priority-up))
-                  (org-a
-                   genda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
+                  (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
                   (org-agenda-overriding-header "\n Upcoming classwork\n")))
 
            (tags "-TODO=\"WAIT\"+assignment+DEADLINE>=\"<today>\""
