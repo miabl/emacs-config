@@ -22,14 +22,14 @@ Toggle light/dark mode themes with system appearance
 
 Fonts
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
-      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
+(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 15)
+      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 15)
       doom-unicode-font (font-spec :family "RobotoMono Nerd Font Mono" :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 15)
       doom-serif-font (font-spec :family "IBM Plex Mono")
  )
 
-(custom-set-faces! '(bold :weight normal))
+;; (custom-set-faces! '(bold :weight normal))
 (setq-default line-spacing 0.25)
 (setq default-text-properties '(line-spacing 0.25 line-height 1.25))
 
@@ -66,8 +66,8 @@ cute catppuccin splash screen
 ** Custom Faces
 The contrast between the semilight and bold fonts is a bit much
 #+begin_src emacs-lisp
-(custom-set-faces!
-  '(bold  :weight normal))
+;; (custom-set-faces!
+;; '(bold  :weight normal))
 #+end_src
 
 

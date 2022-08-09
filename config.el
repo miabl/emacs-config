@@ -8,14 +8,14 @@
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
-(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
-      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 14)
+(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 15)
+      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 15)
       doom-unicode-font (font-spec :family "RobotoMono Nerd Font Mono" :weight 'normal)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 15)
       doom-serif-font (font-spec :family "IBM Plex Mono")
  )
 
-(custom-set-faces! '(bold :weight normal))
+;; (custom-set-faces! '(bold :weight normal))
 (setq-default line-spacing 0.25)
 (setq default-text-properties '(line-spacing 0.25 line-height 1.25))
 
@@ -32,8 +32,8 @@
 
 (setq fancy-splash-image "~/.doom.d/images/catppuccin.png")
 
-(custom-set-faces!
-  '(bold  :weight normal))
+;; (custom-set-faces!
+;; '(bold  :weight normal))
 
 (setenv "PATH" (concat ":/Library/TeX/texbin/:texlive/2022/bin/" (getenv "PATH")))
 (add-to-list 'exec-path "/Library/TeX/texbin/")
