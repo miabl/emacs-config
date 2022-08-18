@@ -8,16 +8,15 @@
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
-(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 15)
-      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'normal :size 15)
-      doom-unicode-font (font-spec :family "RobotoMono Nerd Font Mono" :weight 'normal)
+(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
+      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
+      doom-unicode-font (font-spec :family "RobotoMono Nerd Font Mono" :weight 'semi-light)
       doom-variable-pitch-font (font-spec :family "Overpass" :size 15)
       doom-serif-font (font-spec :family "IBM Plex Mono")
  )
 
-;; (custom-set-faces! '(bold :weight normal))
-(setq-default line-spacing 0.25)
-(setq default-text-properties '(line-spacing 0.25 line-height 1.25))
+(custom-set-faces! '(bold :weight normal))
+(setq default-text-properties '(line-spacing 0.1 line-height 1.1))
 
 (setq display-line-numbers-type 'relative)            ; Relative line numbers
 
@@ -32,8 +31,8 @@
 
 (setq fancy-splash-image "~/.doom.d/images/catppuccin.png")
 
-;; (custom-set-faces!
-;; '(bold  :weight normal))
+(custom-set-faces!
+'(bold  :weight normal))
 
 (setenv "PATH" (concat ":/Library/TeX/texbin/:texlive/2022/bin/" (getenv "PATH")))
 (add-to-list 'exec-path "/Library/TeX/texbin/")
@@ -47,7 +46,6 @@
               org-hide-emphasis-markers t    ; Hide markers
               org-cycle-separator-lines 2    ; Number of empty lines between sections
               org-use-property-inheritance t ; Properties ARE inherited
-              org-indent-indentation-per-level 2 ; Indentation per level
               org-link-use-indirect-buffer-for-internals t ; Indirect buffer for internal links
               org-fontify-quote-and-verse-blocks t ; Specific face for quote and verse blocks
               org-return-follows-link nil    ; Follow links when hitting return
@@ -326,14 +324,14 @@
                   (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
                   (org-agenda-overriding-header "\n Upcoming classwork\n")))
 
-           (tags "-TODO=\"WAIT\"+assignment+DEADLINE>=\"<today>\""
+           (tags "-TODO=\"WAIT\"+assignment+DEADLINE>=\"<now>\""
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 5)
                   (org-agenda-sorting-strategy '(deadline-up priority-down))
                   (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
                   (org-agenda-overriding-header "\n Upcoming assignments\n")))
 
-           (tags "DEADLINE>=\"<today>\"-coursework"
+           (tags "DEADLINE>=\"<now>\"-coursework"
                   ((org-agenda-span 90)
                    (org-agenda-max-tags 5)
                    (org-agenda-sorting-strategy '(deadline-up priority-up))
@@ -347,13 +345,13 @@
                    (org-agenda-prefix-format '((todo   . " ")))
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
                    (org-agenda-overriding-header (propertize " Todo \n" 'face 'bold))))
-           (tags "SCHEDULED>=\"<today>\""
+           (tags "SCHEDULED>=\"<now>\""
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 10)
                   (org-agenda-sorting-strategy '(deadline-up priority-up))
                   (org-agenda-prefix-format '((tags   . " %(my/org-agenda-custom-date) %c ")))
                   (org-agenda-overriding-header "\n Currently waiting\n")))
-            (tags "SCHEDULED<=\"<today>\"+TODO=\"WAIT\""
+            (tags "SCHEDULED<=\"<now>\"+TODO=\"WAIT\""
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 10)
                   (org-agenda-sorting-strategy '(deadline-up priority-up))

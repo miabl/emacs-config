@@ -51,7 +51,7 @@ determine the exact padding."
   (
    ;; common
    (common-accent   '("#7287fd" "violet"  "violet" ))
-   (common-bg       '("#eff1f5" "black"   "black"  ))
+   (common-bg       '("#ffffff" "black"   "black"  ))
    (common-fg       '("#4c4f69" "grey"    "grey"   ))
    (common-ui       '("#9ca0b0" "grey"    "grey"   ))
    (test            '("#6c6f85" "grey"    "grey"   ))
