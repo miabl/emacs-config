@@ -66,3 +66,4 @@
 (package! lsp-ui)
 (package! svg-lib :recipe (:host github :repo "rougier/svg-lib"))
 (package! svg-tag-mode)
+(package! org-ref)

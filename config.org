@@ -3,7 +3,7 @@
 #+startup: fold
 
 * General Look & Feel
-
+** Basics
 name
 #+begin_src emacs-lisp
 (setq user-full-name "Mia")
@@ -22,17 +22,31 @@ Toggle light/dark mode themes with system appearance
 
 Fonts
 #+begin_src emacs-lisp
-(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
-      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
+(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 13)
+      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 14)
       doom-unicode-font (font-spec :family "RobotoMono Nerd Font Mono" :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Overpass" :size 15)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 14)
       doom-serif-font (font-spec :family "IBM Plex Mono")
  )
 
-(custom-set-faces! '(bold :weight normal))
-(setq default-text-properties '(line-spacing 0.1 line-height 1.1))
 
 
+(custom-set-faces!
+  '(bold :weight normal)
+  '(outline-1 :weight normal)
+  '(outline-2 :weight normal)
+  '(outline-3 :weight normal)
+  '(outline-4 :weight normal)
+  '(outline-5 :weight normal)
+  '(outline-6 :weight normal)
+  '(outline-8 :weight normal)
+  '(outline-9 :weight normal)
+  '(treemacs-directory-face :weight normal))
+
+(setq-default line-spacing 0.25)
+(setq default-text-properties '(line-spacing 0.25 line-height 1.25))
+
+(setq-default tab-width 2)
 #+end_src
 
 Relative line numbers for vim
@@ -69,15 +83,20 @@ The contrast between the semilight and bold fonts is a bit much
  '(bold  :weight normal))
 #+end_src
 
+** Treemacs
+#+begin_src emacs-lisp
+(setq doom-themes-treemacs-enable-variable-pitch nil)
+#+end_src
 
 * Org Mode
 
 ** General
 Fix weird path exports with Apple silicon
 #+begin_src emacs-lisp :results none
-(setenv "PATH" (concat ":/Library/TeX/texbin/:texlive/2022/bin/" (getenv "PATH")))
+(setenv "PATH" (concat ":/opt/homebrew/opt/grep/libexec/gnubin:/Library/TeX/texbin/:texlive/2022/bin/" (getenv "PATH")))
 (add-to-list 'exec-path "/Library/TeX/texbin/")
 (add-to-list 'exec-path "texlive/2022/bin/")
+(add-to-list 'exec-path "/opt/homebrew/opt/grep/libexec/gnubin")
 
 #+end_src
 
@@ -282,7 +301,7 @@ setup symbols & svgs for the agenda views
          (canceled (string-match-p (regexp-quote "~") x))
          (x (replace-regexp-in-string "TODO" "" x))
          (x (replace-regexp-in-string "DONE" "" x))
-         (x (replace-regexp-in-string "WAIT" "" x))
+         (x (replace-regexp-in-string "WAIT" "" x))
          (x (replace-regexp-in-string "~" "" x))
          (x (if (and (boundp 'org-agenda-dim) org-agenda-dim)
                 (propertize x 'face 'org-done) x))
@@ -413,7 +432,7 @@ setup symbols & svgs for the agenda views
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
                    (org-agenda-overriding-header (propertize " Todo \n" 'face 'bold))))
 
-           (tags "CITS3001|CITS1402|STAT2402|CITS2211"
+           (tags "CITS3001-assignment|CITS1402-assignment|STAT2402-assignment|CITS2211-assignment"
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 10)
                   (org-agenda-sorting-strategy '(deadline-up priority-up))
@@ -425,14 +444,14 @@ setup symbols & svgs for the agenda views
                   (org-agenda-max-tags 5)
                   (org-agenda-sorting-strategy '(deadline-up priority-down))
                   (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
-                  (org-agenda-overriding-header "\n Upcoming assignments\n")))
+                  (org-agenda-overriding-header "\n Upcoming assignments\n")))
 
            (tags "DEADLINE>=\"<now>\"-coursework"
                   ((org-agenda-span 90)
-                   (org-agenda-max-tags 5)
+                   (org-agenda-max-tags 10)
                    (org-agenda-sorting-strategy '(deadline-up priority-up))
                    (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
-                   (org-agenda-overriding-header "\n Upcoming deadlines\n")))
+                   (org-agenda-overriding-header "\n Upcoming deadlines\n")))
                 ))
 
           ("w" "Waiting"
@@ -487,5 +506,10 @@ Enable midnight mode by default - looks good in light mode too.
 (use-package! lsp-ui)
 #+end_src
 
+cute treemacs
+#+begin_src emacs-lisp
+(setq doom-themes-treemacs-theme "doom-colors")
+#+end_src
+
 #+RESULTS:
-: lsp-ui
+: doom-colors

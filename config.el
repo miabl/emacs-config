@@ -8,15 +8,31 @@
 
 (add-hook 'ns-system-appearance-change-functions #'my/apply-theme)
 
-(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
-      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 15)
+(setq doom-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 13)
+      doom-big-font (font-spec :family "RobotoMono Nerd Font" :weight 'semi-light :size 14)
       doom-unicode-font (font-spec :family "RobotoMono Nerd Font Mono" :weight 'semi-light)
-      doom-variable-pitch-font (font-spec :family "Overpass" :size 15)
+      doom-variable-pitch-font (font-spec :family "Overpass" :size 14)
       doom-serif-font (font-spec :family "IBM Plex Mono")
  )
 
-(custom-set-faces! '(bold :weight normal))
-(setq default-text-properties '(line-spacing 0.1 line-height 1.1))
+
+
+(custom-set-faces!
+  '(bold :weight normal)
+  '(outline-1 :weight normal)
+  '(outline-2 :weight normal)
+  '(outline-3 :weight normal)
+  '(outline-4 :weight normal)
+  '(outline-5 :weight normal)
+  '(outline-6 :weight normal)
+  '(outline-8 :weight normal)
+  '(outline-9 :weight normal)
+  '(treemacs-directory-face :weight normal))
+
+(setq-default line-spacing 0.25)
+(setq default-text-properties '(line-spacing 0.25 line-height 1.25))
+
+(setq-default tab-width 2)
 
 (setq display-line-numbers-type 'relative)            ; Relative line numbers
 
@@ -34,9 +50,12 @@
 (custom-set-faces!
 '(bold  :weight normal))
 
-(setenv "PATH" (concat ":/Library/TeX/texbin/:texlive/2022/bin/" (getenv "PATH")))
+(setq doom-themes-treemacs-enable-variable-pitch nil)
+
+(setenv "PATH" (concat ":/opt/homebrew/opt/grep/libexec/gnubin:/Library/TeX/texbin/:texlive/2022/bin/" (getenv "PATH")))
 (add-to-list 'exec-path "/Library/TeX/texbin/")
 (add-to-list 'exec-path "texlive/2022/bin/")
+(add-to-list 'exec-path "/opt/homebrew/opt/grep/libexec/gnubin")
 
 (setq undo-limit 10000000
       evil-want-fine-undo t)
@@ -191,7 +210,7 @@
          (canceled (string-match-p (regexp-quote "~") x))
          (x (replace-regexp-in-string "TODO" "" x))
          (x (replace-regexp-in-string "DONE" "" x))
-         (x (replace-regexp-in-string "WAIT" "" x))
+         (x (replace-regexp-in-string "WAIT" "" x))
          (x (replace-regexp-in-string "~" "" x))
          (x (if (and (boundp 'org-agenda-dim) org-agenda-dim)
                 (propertize x 'face 'org-done) x))
@@ -317,7 +336,7 @@
                    (org-agenda-skip-function '(org-agenda-skip-entry-if 'timestamp))
                    (org-agenda-overriding-header (propertize " Todo \n" 'face 'bold))))
 
-           (tags "CITS3001|CITS1402|STAT2402|CITS2211"
+           (tags "CITS3001-assignment|CITS1402-assignment|STAT2402-assignment|CITS2211-assignment"
                  ((org-agenda-span 90)
                   (org-agenda-max-tags 10)
                   (org-agenda-sorting-strategy '(deadline-up priority-up))
@@ -329,14 +348,14 @@
                   (org-agenda-max-tags 5)
                   (org-agenda-sorting-strategy '(deadline-up priority-down))
                   (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
-                  (org-agenda-overriding-header "\n Upcoming assignments\n")))
+                  (org-agenda-overriding-header "\n Upcoming assignments\n")))
 
            (tags "DEADLINE>=\"<now>\"-coursework"
                   ((org-agenda-span 90)
-                   (org-agenda-max-tags 5)
+                   (org-agenda-max-tags 10)
                    (org-agenda-sorting-strategy '(deadline-up priority-up))
                    (org-agenda-prefix-format '((tags .  " %(my/org-agenda-custom-date) %c ")))
-                   (org-agenda-overriding-header "\n Upcoming deadlines\n")))
+                   (org-agenda-overriding-header "\n Upcoming deadlines\n")))
                 ))
 
           ("w" "Waiting"
@@ -369,3 +388,5 @@
 )
 
 (use-package! lsp-ui)
+
+(setq doom-themes-treemacs-theme "doom-colors")
